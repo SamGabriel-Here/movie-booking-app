@@ -136,7 +136,7 @@ class _TicketPreview extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
+                child: Image.asset(
                   movie.posterUrl,
                   width: 70,
                   height: 96,

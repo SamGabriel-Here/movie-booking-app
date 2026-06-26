@@ -7,10 +7,12 @@ A movie ticket booking app built with Flutter. Browse movies currently showing i
 ## Features
 
 - Browse movies now showing, with posters, ratings, and synopses
+- Search by title and filter by genre on the home screen
+- Responsive movie grid that adapts from phone to desktop layouts
 - View showtimes grouped by cinema
-- Interactive seat selection with a live running total
-- Checkout summary and booking confirmation with a generated booking ID
-- Light, card-based UI
+- Interactive seat selection with a seat-state legend and a live running total
+- Order-summary checkout and a ticket-style booking confirmation with a generated booking ID
+- Cohesive Material 3 design system with a shared theme and reusable components
 
 ## Tech stack
 
@@ -21,11 +23,14 @@ A movie ticket booking app built with Flutter. Browse movies currently showing i
 
 ```
 lib/
-  main.dart              # app entry point and theme
+  main.dart               # app entry point
+  theme/
+    app_theme.dart        # colors, typography, and shared Material 3 theme
   models/                 # data classes: Movie, Cinema, Showtime, Seat, Booking
   data/
     mock_data.dart        # mock movies, cinemas, and showtimes
-  screens/                # one file per app screen
+  screens/                # one file per app screen (home, details, showtimes,
+                          #   seat selection, checkout, confirmation)
   widgets/                # reusable widgets (movie card, seat tile)
 ```
 

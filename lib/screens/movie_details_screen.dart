@@ -52,7 +52,7 @@ class MovieDetailsScreen extends StatelessWidget {
                 children: [
                   Hero(
                     tag: 'poster-${movie.id}',
-                    child: Image.network(
+                    child: Image.asset(
                       movie.posterUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>

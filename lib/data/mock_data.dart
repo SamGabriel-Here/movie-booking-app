@@ -14,7 +14,7 @@ final List<Movie> mockMovies = [
   const Movie(
     id: 'm1',
     title: 'Toy Story 5',
-    posterUrl: 'https://picsum.photos/seed/toystory5/300/450',
+    posterUrl: 'assets/posters/toy_story_5.jpg',
     rating: 8.2,
     synopsis:
         'Woody, Buzz, Jessie and the gang face their biggest challenge yet '
@@ -26,7 +26,7 @@ final List<Movie> mockMovies = [
   const Movie(
     id: 'm2',
     title: 'Masters of the Universe',
-    posterUrl: 'https://picsum.photos/seed/mastersuniverse/300/450',
+    posterUrl: 'assets/posters/masters_of_the_universe.jpg',
     rating: 7.1,
     synopsis:
         'After 15 years apart, the Sword of Power leads Prince Adam back '
@@ -38,7 +38,7 @@ final List<Movie> mockMovies = [
   const Movie(
     id: 'm3',
     title: 'Drishyam 3',
-    posterUrl: 'https://picsum.photos/seed/drishyam3/300/450',
+    posterUrl: 'assets/posters/drishyam_3.jpg',
     rating: 8.6,
     synopsis:
         'Five years after Drishyam 2, Georgekutty\'s carefully built calm '
@@ -50,7 +50,7 @@ final List<Movie> mockMovies = [
   const Movie(
     id: 'm4',
     title: 'Engal Thangam',
-    posterUrl: 'https://picsum.photos/seed/engalthangam/300/450',
+    posterUrl: 'assets/posters/engal_thangam.jpg',
     rating: 6.9,
     synopsis:
         'In a deeply traditional household, a quiet woman struggles for '
@@ -62,7 +62,7 @@ final List<Movie> mockMovies = [
   const Movie(
     id: 'm5',
     title: 'Secret of Kalinga',
-    posterUrl: 'https://picsum.photos/seed/secretofkalinga/300/450',
+    posterUrl: 'assets/posters/secret_of_kalinga.jpg',
     rating: 6.4,
     synopsis:
         'On a college campus near an old forest well sit the remnants of '
@@ -74,7 +74,7 @@ final List<Movie> mockMovies = [
   const Movie(
     id: 'm6',
     title: 'Kaalaghatta',
-    posterUrl: 'https://picsum.photos/seed/kaalaghatta/300/450',
+    posterUrl: 'assets/posters/kaalaghatta.jpg',
     rating: 6.1,
     synopsis:
         'A Kannada drama now running in theaters, directed by K Prakash '

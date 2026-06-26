@@ -24,13 +24,9 @@ class MovieCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
+                    Image.asset(
                       movie.posterUrl,
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, progress) {
-                        if (progress == null) return child;
-                        return const _PosterFallback();
-                      },
                       errorBuilder: (context, error, stackTrace) =>
                           const _PosterFallback(),
                     ),
