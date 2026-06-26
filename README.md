@@ -1,4 +1,4 @@
-# Movie Booking App
+# ShowRush
 
 A movie ticket booking app built with Flutter. Browse movies currently showing in Bengaluru, pick a showtime, select seats on an interactive seat map, and complete a mock checkout through to a booking confirmation.
 

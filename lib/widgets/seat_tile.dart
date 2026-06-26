@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/seat.dart';
-
-const _districtRed = Color(0xFFE23744);
+import '../theme/app_theme.dart';
 
 class SeatTile extends StatelessWidget {
   final Seat seat;
@@ -12,11 +11,11 @@ class SeatTile extends StatelessWidget {
   Color _colorFor(SeatStatus status) {
     switch (status) {
       case SeatStatus.available:
-        return Colors.white;
+        return AppColors.surface;
       case SeatStatus.selected:
-        return _districtRed;
+        return AppColors.districtRed;
       case SeatStatus.booked:
-        return const Color(0xFFE8E8E8);
+        return AppColors.line;
     }
   }
 
@@ -25,27 +24,39 @@ class SeatTile extends StatelessWidget {
     final isBooked = seat.status == SeatStatus.booked;
     return GestureDetector(
       onTap: isBooked ? null : onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOut,
         margin: const EdgeInsets.all(3),
         decoration: BoxDecoration(
           color: _colorFor(seat.status),
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color: seat.status == SeatStatus.selected
-                ? _districtRed
-                : Colors.black26,
+                ? AppColors.districtRed
+                : AppColors.line,
           ),
+          boxShadow: seat.status == SeatStatus.selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.districtRed.withValues(alpha: 0.22),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
         alignment: Alignment.center,
         child: Text(
           seat.label,
           style: TextStyle(
             fontSize: 10,
+            fontWeight: FontWeight.w800,
             color: isBooked
-                ? Colors.black26
+                ? AppColors.muted.withValues(alpha: 0.6)
                 : seat.status == SeatStatus.selected
                 ? Colors.white
-                : Colors.black54,
+                : AppColors.carbon,
           ),
         ),
       ),

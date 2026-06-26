@@ -2,6 +2,14 @@ import '../models/movie.dart';
 import '../models/cinema.dart';
 import '../models/showtime.dart';
 
+final String _todayIsoDate = _isoDate(DateTime.now());
+
+String _isoDate(DateTime date) {
+  final month = date.month.toString().padLeft(2, '0');
+  final day = date.day.toString().padLeft(2, '0');
+  return '${date.year}-$month-$day';
+}
+
 final List<Movie> mockMovies = [
   const Movie(
     id: 'm1',
@@ -103,7 +111,7 @@ final List<Showtime> mockShowtimes = [
           id: '${movie.id}-${cinema.id}-$time',
           movieId: movie.id,
           cinemaId: cinema.id,
-          date: '2026-06-22',
+          date: _todayIsoDate,
           time: time,
           screenName: 'Screen ${1 + mockCinemas.indexOf(cinema)}',
           pricePerSeat: 280,
