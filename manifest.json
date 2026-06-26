@@ -1,11 +1,11 @@
 {
-    "name": "movie_booking_app",
-    "short_name": "movie_booking_app",
+    "name": "ShowRush",
+    "short_name": "ShowRush",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A movie ticket booking app for browsing shows and reserving seats.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
