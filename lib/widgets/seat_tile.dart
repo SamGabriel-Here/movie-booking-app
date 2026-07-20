@@ -4,60 +4,76 @@ import '../theme/app_theme.dart';
 
 class SeatTile extends StatelessWidget {
   final Seat seat;
+  final double size;
   final VoidCallback onTap;
 
-  const SeatTile({super.key, required this.seat, required this.onTap});
-
-  Color _colorFor(SeatStatus status) {
-    switch (status) {
-      case SeatStatus.available:
-        return AppColors.surface;
-      case SeatStatus.selected:
-        return AppColors.districtRed;
-      case SeatStatus.booked:
-        return AppColors.line;
-    }
-  }
+  const SeatTile({
+    super.key,
+    required this.seat,
+    required this.size,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isBooked = seat.status == SeatStatus.booked;
-    return GestureDetector(
-      onTap: isBooked ? null : onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        curve: Curves.easeOut,
-        margin: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          color: _colorFor(seat.status),
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(
-            color: seat.status == SeatStatus.selected
-                ? AppColors.districtRed
-                : AppColors.line,
+    final isSelected = seat.status == SeatStatus.selected;
+
+    return MouseRegion(
+      cursor: isBooked ? MouseCursor.defer : SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: isBooked ? null : onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          curve: Curves.easeOut,
+          width: size,
+          height: size,
+          margin: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            gradient: isSelected ? AppColors.goldGradient : null,
+            color: isSelected
+                ? null
+                : isBooked
+                ? AppColors.glass(0.04)
+                : AppColors.glass(0.07),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(size * 0.32),
+              bottom: Radius.circular(size * 0.16),
+            ),
+            border: Border.all(
+              color: isSelected
+                  ? Colors.transparent
+                  : isBooked
+                  ? AppColors.glass(0.06)
+                  : AppColors.glass(0.2),
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppColors.gold.withValues(alpha: 0.45),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : null,
           ),
-          boxShadow: seat.status == SeatStatus.selected
-              ? [
-                  BoxShadow(
-                    color: AppColors.districtRed.withValues(alpha: 0.22),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+          alignment: Alignment.center,
+          child: isBooked
+              ? Icon(
+                  Icons.close_rounded,
+                  size: size * 0.42,
+                  color: AppColors.muted.withValues(alpha: 0.4),
+                )
+              : Text(
+                  '${seat.number}',
+                  style: TextStyle(
+                    fontSize: size * 0.32,
+                    fontWeight: FontWeight.w800,
+                    color: isSelected
+                        ? const Color(0xFF201502)
+                        : AppColors.muted,
                   ),
-                ]
-              : null,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          seat.label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            color: isBooked
-                ? AppColors.muted.withValues(alpha: 0.6)
-                : seat.status == SeatStatus.selected
-                ? Colors.white
-                : AppColors.carbon,
-          ),
+                ),
         ),
       ),
     );

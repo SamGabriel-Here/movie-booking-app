@@ -3,6 +3,7 @@ import '../data/mock_data.dart';
 import '../models/movie.dart';
 import '../models/showtime.dart';
 import '../theme/app_theme.dart';
+import 'checkout_screen.dart' show TicketPerforation;
 import 'home_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
@@ -49,45 +50,68 @@ class ConfirmationScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
-          children: [
-            const CircleAvatar(
-              radius: 38,
-              backgroundColor: Color(0xFFE5F8EF),
-              child: Icon(
-                Icons.check_rounded,
-                color: AppColors.success,
-                size: 46,
-              ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.fromLTRB(20, 28, 20, 24),
+              children: [
+                Center(
+                  child: Container(
+                    width: 84,
+                    height: 84,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.emerald.withValues(alpha: 0.12),
+                      border: Border.all(
+                        color: AppColors.emerald.withValues(alpha: 0.4),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.emerald.withValues(alpha: 0.25),
+                          blurRadius: 32,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: AppColors.emerald,
+                      size: 44,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'Booking confirmed',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _bookingId,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: AppColors.muted,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 26),
+                _TicketCard(
+                  movie: movie,
+                  cinemaName: cinema.name,
+                  showtime: showtime,
+                  selectedSeats: selectedSeats,
+                  total: total,
+                  bookingId: _bookingId,
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Booking confirmed',
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              _bookingId,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.muted,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 24),
-            _TicketCard(
-              movie: movie,
-              cinemaName: cinema.name,
-              showtime: showtime,
-              selectedSeats: selectedSeats,
-              total: total,
-              bookingId: _bookingId,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -113,122 +137,149 @@ class _TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.elevated,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.glass(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.4),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    movie.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w900,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        movie.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 11,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.emerald.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(99),
+                        border: Border.all(
+                          color: AppColors.emerald.withValues(alpha: 0.35),
+                        ),
+                      ),
+                      child: const Text(
+                        'Paid',
+                        style: TextStyle(
+                          color: AppColors.emerald,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                _DetailRow(
+                  icon: Icons.theaters_rounded,
+                  label: 'Cinema',
+                  value: cinemaName,
+                ),
+                const SizedBox(height: 14),
+                _DetailRow(
+                  icon: Icons.schedule_rounded,
+                  label: 'Showtime',
+                  value: '${showtime.date} · ${showtime.time}',
+                ),
+                const SizedBox(height: 14),
+                _DetailRow(
+                  icon: Icons.event_seat_rounded,
+                  label: 'Seats',
+                  value: selectedSeats.join(', '),
+                ),
+              ],
+            ),
+          ),
+          const TicketPerforation(),
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    width: 168,
+                    height: 168,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.qr_code_2_rounded,
+                      size: 136,
+                      color: Color(0xFF0A0C13),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.softRed,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    'Paid',
-                    style: TextStyle(
-                      color: AppColors.districtRed,
-                      fontWeight: FontWeight.w900,
+                const SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    bookingId,
+                    style: const TextStyle(
+                      color: AppColors.muted,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
                     ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppColors.glass(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.glass(0.08)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Total paid',
+                        style: TextStyle(
+                          color: AppColors.muted,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        '₹${total.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          color: AppColors.gold,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 18),
-            _DetailRow(
-              icon: Icons.theaters_rounded,
-              label: 'Cinema',
-              value: cinemaName,
-            ),
-            const SizedBox(height: 14),
-            _DetailRow(
-              icon: Icons.schedule_rounded,
-              label: 'Showtime',
-              value: '${showtime.date} · ${showtime.time}',
-            ),
-            const SizedBox(height: 14),
-            _DetailRow(
-              icon: Icons.event_seat_rounded,
-              label: 'Seats',
-              value: selectedSeats.join(', '),
-            ),
-            const SizedBox(height: 18),
-            const Divider(),
-            const SizedBox(height: 18),
-            Center(
-              child: Container(
-                width: 164,
-                height: 164,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.line),
-                ),
-                child: const Icon(
-                  Icons.qr_code_2_rounded,
-                  size: 132,
-                  color: AppColors.ink,
-                ),
-              ),
-            ),
-            const SizedBox(height: 14),
-            Center(
-              child: Text(
-                bookingId,
-                style: const TextStyle(
-                  color: AppColors.muted,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.canvas,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Total paid',
-                    style: TextStyle(
-                      color: AppColors.carbon,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  Text(
-                    '₹${total.toStringAsFixed(0)}',
-                    style: const TextStyle(
-                      color: AppColors.districtRed,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -254,10 +305,10 @@ class _DetailRow extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: AppColors.softRed,
-            borderRadius: BorderRadius.circular(8),
+            color: AppColors.crimson.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(11),
           ),
-          child: Icon(icon, color: AppColors.districtRed, size: 20),
+          child: Icon(icon, color: AppColors.crimson, size: 19),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -276,8 +327,8 @@ class _DetailRow extends StatelessWidget {
               Text(
                 value,
                 style: const TextStyle(
-                  color: AppColors.ink,
-                  fontWeight: FontWeight.w800,
+                  color: AppColors.text,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],

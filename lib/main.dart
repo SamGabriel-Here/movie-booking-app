@@ -14,7 +14,7 @@ class MovieBookingApp extends StatelessWidget {
     return MaterialApp(
       title: 'ShowRush',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
+      theme: AppTheme.dark(),
       home: const HomeScreen(),
     );
   }

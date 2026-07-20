@@ -42,9 +42,9 @@ class CheckoutScreen extends StatelessWidget {
         top: false,
         child: Container(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.surface,
-            border: Border(top: BorderSide(color: AppColors.line)),
+            border: Border(top: BorderSide(color: AppColors.glass(0.08))),
           ),
           child: FilledButton.icon(
             onPressed: () => _confirmBooking(context),
@@ -64,39 +64,42 @@ class CheckoutScreen extends StatelessWidget {
             selectedSeats: selectedSeats,
           ),
           const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Price details',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w900,
-                    ),
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.line),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Price details',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
                   ),
-                  const SizedBox(height: 16),
-                  _SummaryRow(
-                    label: 'Tickets (${selectedSeats.length})',
-                    value:
-                        '₹${(showtime.pricePerSeat * selectedSeats.length).toStringAsFixed(0)}',
-                  ),
-                  const SizedBox(height: 12),
-                  _SummaryRow(
-                    label: 'Price per seat',
-                    value: '₹${showtime.pricePerSeat.toStringAsFixed(0)}',
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  _SummaryRow(
-                    label: 'Total',
-                    value: '₹${total.toStringAsFixed(0)}',
-                    isTotal: true,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+                _SummaryRow(
+                  label: 'Tickets (${selectedSeats.length})',
+                  value:
+                      '₹${(showtime.pricePerSeat * selectedSeats.length).toStringAsFixed(0)}',
+                ),
+                const SizedBox(height: 12),
+                _SummaryRow(
+                  label: 'Price per seat',
+                  value: '₹${showtime.pricePerSeat.toStringAsFixed(0)}',
+                ),
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 16),
+                _SummaryRow(
+                  label: 'Total',
+                  value: '₹${total.toStringAsFixed(0)}',
+                  isTotal: true,
+                ),
+              ],
             ),
           ),
         ],
@@ -123,91 +126,109 @@ class _TicketPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.ink,
-        borderRadius: BorderRadius.circular(8),
+        color: AppColors.elevated,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.glass(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.4),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  movie.posterUrl,
-                  width: 70,
-                  height: 96,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    movie.posterUrl,
                     width: 70,
                     height: 96,
-                    color: AppColors.softRed,
-                    child: const Icon(
-                      Icons.local_movies_rounded,
-                      color: AppColors.districtRed,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: 70,
+                      height: 96,
+                      color: AppColors.surface,
+                      child: const Icon(
+                        Icons.local_movies_rounded,
+                        color: AppColors.muted,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        movie.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: AppColors.text,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _TicketLine(
+                        icon: Icons.location_on_rounded,
+                        text: '$cinemaName · $cinemaLocation',
+                      ),
+                      const SizedBox(height: 6),
+                      _TicketLine(
+                        icon: Icons.schedule_rounded,
+                        text:
+                            '${showtime.date} · ${showtime.time} · ${showtime.screenName}',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const TicketPerforation(),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      movie.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
+                    const Text(
+                      'SEATS',
+                      style: TextStyle(
+                        color: AppColors.gold,
+                        fontSize: 11,
                         fontWeight: FontWeight.w900,
+                        letterSpacing: 1.6,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    _TicketLine(
-                      icon: Icons.location_on_rounded,
-                      text: '$cinemaName · $cinemaLocation',
-                    ),
-                    const SizedBox(height: 6),
-                    _TicketLine(
-                      icon: Icons.schedule_rounded,
-                      text:
-                          '${showtime.date} · ${showtime.time} · ${showtime.screenName}',
+                    const SizedBox(height: 4),
+                    Text(
+                      selectedSeats.join(', '),
+                      style: const TextStyle(
+                        color: AppColors.text,
+                        fontSize: 19,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Seats',
-                  style: TextStyle(
-                    color: AppColors.gold,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  selectedSeats.join(', '),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                  ),
+                Icon(
+                  Icons.qr_code_2_rounded,
+                  size: 44,
+                  color: AppColors.muted.withValues(alpha: 0.7),
                 ),
               ],
             ),
@@ -216,6 +237,68 @@ class _TicketPreview extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Dashed line with semicircular notches, like a torn cinema ticket edge.
+class TicketPerforation extends StatelessWidget {
+  final Color notchColor;
+
+  const TicketPerforation({super.key, this.notchColor = AppColors.night});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 24,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              child: CustomPaint(painter: _DashPainter()),
+            ),
+          ),
+          Positioned(
+            left: -12,
+            top: 0,
+            child: _notch(),
+          ),
+          Positioned(
+            right: -12,
+            top: 0,
+            child: _notch(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _notch() => Container(
+    width: 24,
+    height: 24,
+    decoration: BoxDecoration(color: notchColor, shape: BoxShape.circle),
+  );
+}
+
+class _DashPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.glass(0.18)
+      ..strokeWidth = 1.4;
+
+    const dashWidth = 6.0;
+    const gap = 5.0;
+    final y = size.height / 2;
+    var x = 0.0;
+    while (x < size.width) {
+      canvas.drawLine(Offset(x, y), Offset(x + dashWidth, y), paint);
+      x += dashWidth + gap;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _TicketLine extends StatelessWidget {
@@ -228,16 +311,17 @@ class _TicketLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.gold, size: 16),
+        Icon(icon, color: AppColors.gold, size: 15),
         const SizedBox(width: 6),
         Expanded(
           child: Text(
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.76),
-              fontWeight: FontWeight.w700,
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
             ),
           ),
         ),
@@ -259,26 +343,29 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = isTotal
+    final labelStyle = isTotal
         ? Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: AppColors.ink,
-            fontWeight: FontWeight.w900,
+            color: AppColors.text,
+            fontWeight: FontWeight.w800,
           )
-        : const TextStyle(color: AppColors.carbon, fontWeight: FontWeight.w700);
+        : const TextStyle(color: AppColors.muted, fontWeight: FontWeight.w600);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(child: Text(label, style: style)),
+        Expanded(child: Text(label, style: labelStyle)),
         const SizedBox(width: 12),
         Text(
           value,
           style: isTotal
               ? Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.districtRed,
-                  fontWeight: FontWeight.w900,
+                  color: AppColors.gold,
+                  fontWeight: FontWeight.w800,
                 )
-              : style,
+              : const TextStyle(
+                  color: AppColors.text,
+                  fontWeight: FontWeight.w700,
+                ),
         ),
       ],
     );

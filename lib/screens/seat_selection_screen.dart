@@ -77,40 +77,158 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
         total: _total,
         onContinue: selectedSeats.isEmpty ? null : _openCheckout,
       ),
-      body: Column(
-        children: [
-          _ShowtimeStrip(movie: widget.movie, showtime: widget.showtime),
-          const SizedBox(height: 20),
-          const _ScreenIndicator(),
-          Expanded(
-            child: Center(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _ShowtimeStrip(movie: widget.movie, showtime: widget.showtime),
+            const SizedBox(height: 26),
+            const _ScreenIndicator(),
+            const SizedBox(height: 26),
+            Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 560),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: _seatsPerRow,
-                          childAspectRatio: 1.04,
-                        ),
-                    itemCount: _seats.length,
-                    itemBuilder: (context, index) {
-                      final seat = _seats[index];
-                      return SeatTile(
-                        seat: seat,
-                        onTap: () => _toggleSeat(seat),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Row label columns + centre aisle + per-seat margins.
+                      final seatSize =
+                          ((constraints.maxWidth - 2 * 22 - 26) / _seatsPerRow -
+                                  6)
+                              .clamp(24.0, 44.0);
+
+                      return Column(
+                        children: [
+                          for (var r = 0; r < _rows.length; r++) ...[
+                            _SeatRow(
+                              rowLabel: _rows[r],
+                              seats: _seats.sublist(
+                                r * _seatsPerRow,
+                                (r + 1) * _seatsPerRow,
+                              ),
+                              seatSize: seatSize,
+                              onToggle: _toggleSeat,
+                            ),
+                            const SizedBox(height: 2),
+                          ],
+                        ],
                       );
                     },
                   ),
                 ),
               ),
             ),
-          ),
-          const _Legend(),
-          const SizedBox(height: 10),
-        ],
+            const SizedBox(height: 22),
+            const _Legend(),
+            const SizedBox(height: 18),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _SeatRow extends StatelessWidget {
+  final String rowLabel;
+  final List<Seat> seats;
+  final double seatSize;
+  final ValueChanged<Seat> onToggle;
+
+  const _SeatRow({
+    required this.rowLabel,
+    required this.seats,
+    required this.seatSize,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final half = seats.length ~/ 2;
+
+    Widget label() => SizedBox(
+      width: 22,
+      child: Text(
+        rowLabel,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: AppColors.muted.withValues(alpha: 0.65),
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        label(),
+        for (final seat in seats.take(half))
+          SeatTile(
+            seat: seat,
+            size: seatSize,
+            onTap: () => onToggle(seat),
+          ),
+        const SizedBox(width: 26),
+        for (final seat in seats.skip(half))
+          SeatTile(
+            seat: seat,
+            size: seatSize,
+            onTap: () => onToggle(seat),
+          ),
+        label(),
+      ],
+    );
+  }
+}
+
+class _ScreenIndicator extends StatelessWidget {
+  const _ScreenIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Perspective-tilted glowing screen.
+        Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.002)
+            ..rotateX(-0.6),
+          child: Container(
+            width: 300,
+            height: 26,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.gold.withValues(alpha: 0.95),
+                  AppColors.goldDeep.withValues(alpha: 0.35),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.gold.withValues(alpha: 0.35),
+                  blurRadius: 40,
+                  spreadRadius: 4,
+                  offset: const Offset(0, 14),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Text(
+          'S C R E E N',
+          style: TextStyle(
+            fontSize: 11,
+            letterSpacing: 3,
+            color: AppColors.muted.withValues(alpha: 0.8),
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -131,7 +249,7 @@ class _ShowtimeStrip extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         border: Border.all(color: AppColors.line),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
@@ -139,12 +257,13 @@ class _ShowtimeStrip extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: AppColors.softRed,
-              borderRadius: BorderRadius.circular(8),
+              color: AppColors.crimson.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
               Icons.event_seat_rounded,
-              color: AppColors.districtRed,
+              color: AppColors.crimson,
+              size: 20,
             ),
           ),
           const SizedBox(width: 12),
@@ -157,7 +276,7 @@ class _ShowtimeStrip extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -167,7 +286,8 @@ class _ShowtimeStrip extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: AppColors.muted,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
                   ),
                 ),
               ],
@@ -177,51 +297,13 @@ class _ShowtimeStrip extends StatelessWidget {
           Text(
             '₹${showtime.pricePerSeat.toStringAsFixed(0)}',
             style: const TextStyle(
-              color: AppColors.teal,
-              fontWeight: FontWeight.w900,
+              color: AppColors.gold,
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _ScreenIndicator extends StatelessWidget {
-  const _ScreenIndicator();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 260,
-          height: 10,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-            gradient: const LinearGradient(
-              colors: [Color(0xFFFFC2C7), AppColors.districtRed],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.districtRed.withValues(alpha: 0.26),
-                blurRadius: 18,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 7),
-        const Text(
-          'SCREEN',
-          style: TextStyle(
-            fontSize: 11,
-            letterSpacing: 0,
-            color: AppColors.muted,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -231,16 +313,22 @@ class _Legend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget item(Color color, String label, {Color? borderColor}) => Row(
+    Widget item({
+      Color? color,
+      Gradient? gradient,
+      Color? borderColor,
+      required String label,
+    }) => Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 14,
-          height: 14,
+          width: 15,
+          height: 15,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: borderColor ?? AppColors.line),
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(5),
+            border: borderColor != null ? Border.all(color: borderColor) : null,
           ),
         ),
         const SizedBox(width: 6),
@@ -259,16 +347,20 @@ class _Legend extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 16,
+        spacing: 18,
         runSpacing: 8,
         children: [
-          item(AppColors.surface, 'Available'),
           item(
-            AppColors.districtRed,
-            'Selected',
-            borderColor: AppColors.districtRed,
+            color: AppColors.glass(0.07),
+            borderColor: AppColors.glass(0.2),
+            label: 'Available',
           ),
-          item(AppColors.line, 'Booked'),
+          item(gradient: AppColors.goldGradient, label: 'Selected'),
+          item(
+            color: AppColors.glass(0.04),
+            borderColor: AppColors.glass(0.06),
+            label: 'Booked',
+          ),
         ],
       ),
     );
@@ -289,15 +381,15 @@ class _SeatSummaryBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasSelection = selectedSeats.isNotEmpty;
-    final seatText = hasSelection ? selectedSeats.join(', ') : 'No seats';
+    final seatText = hasSelection ? selectedSeats.join(', ') : 'No seats selected';
 
     return SafeArea(
       top: false,
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.surface,
-          border: Border(top: BorderSide(color: AppColors.line)),
+          border: Border(top: BorderSide(color: AppColors.glass(0.08))),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -309,9 +401,9 @@ class _SeatSummaryBar extends StatelessWidget {
                     seatText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.ink,
-                      fontWeight: FontWeight.w900,
+                    style: TextStyle(
+                      color: hasSelection ? AppColors.text : AppColors.muted,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
@@ -319,10 +411,8 @@ class _SeatSummaryBar extends StatelessWidget {
                 Text(
                   '₹${total.toStringAsFixed(0)}',
                   style: TextStyle(
-                    color: hasSelection
-                        ? AppColors.districtRed
-                        : AppColors.muted,
-                    fontWeight: FontWeight.w900,
+                    color: hasSelection ? AppColors.gold : AppColors.muted,
+                    fontWeight: FontWeight.w800,
                     fontSize: 18,
                   ),
                 ),

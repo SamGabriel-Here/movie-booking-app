@@ -21,9 +21,9 @@ class MovieDetailsScreen extends StatelessWidget {
         top: false,
         child: Container(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.surface,
-            border: Border(top: BorderSide(color: AppColors.line)),
+            border: Border(top: BorderSide(color: AppColors.glass(0.08))),
           ),
           child: FilledButton.icon(
             onPressed: () => _openShowtimes(context),
@@ -35,17 +35,16 @@ class MovieDetailsScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 380,
+            expandedHeight: 420,
             pinned: true,
             stretch: true,
-            backgroundColor: AppColors.ink,
+            backgroundColor: AppColors.night,
             foregroundColor: Colors.white,
             titleTextStyle: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w800,
             ),
-            title: Text(movie.title),
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
@@ -64,10 +63,12 @@ class MovieDetailsScreen extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
+                        stops: const [0.0, 0.45, 0.78, 1.0],
                         colors: [
-                          Colors.black.withValues(alpha: 0.05),
-                          Colors.black.withValues(alpha: 0.38),
-                          AppColors.ink.withValues(alpha: 0.94),
+                          Colors.black.withValues(alpha: 0.3),
+                          Colors.black.withValues(alpha: 0.1),
+                          const Color(0xD90A0C13),
+                          AppColors.night,
                         ],
                       ),
                     ),
@@ -75,7 +76,7 @@ class MovieDetailsScreen extends StatelessWidget {
                   Positioned(
                     left: 20,
                     right: 20,
-                    bottom: 24,
+                    bottom: 20,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -85,12 +86,13 @@ class MovieDetailsScreen extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            height: 1.04,
+                            fontSize: 34,
+                            fontWeight: FontWeight.w800,
+                            height: 1.05,
+                            letterSpacing: -0.5,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 14),
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
@@ -98,17 +100,15 @@ class MovieDetailsScreen extends StatelessWidget {
                             _HeroPill(
                               icon: Icons.star_rounded,
                               label: movie.rating.toStringAsFixed(1),
-                              color: AppColors.gold,
+                              iconColor: AppColors.gold,
                             ),
                             _HeroPill(
                               icon: Icons.schedule_rounded,
                               label: '${movie.durationMinutes} min',
-                              color: Colors.white,
                             ),
                             _HeroPill(
                               icon: Icons.theaters_rounded,
                               label: movie.genres.first,
-                              color: Colors.white,
                             ),
                           ],
                         ),
@@ -129,37 +129,81 @@ class MovieDetailsScreen extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: movie.genres
-                        .map((genre) => Chip(label: Text(genre)))
+                        .map(
+                          (genre) => Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.glass(0.05),
+                              borderRadius: BorderRadius.circular(99),
+                              border: Border.all(color: AppColors.glass(0.12)),
+                            ),
+                            child: Text(
+                              genre,
+                              style: const TextStyle(
+                                color: AppColors.text,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        )
                         .toList(),
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Synopsis',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w900,
-                    ),
+                  const SizedBox(height: 26),
+                  Row(
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.crimsonGradient,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Synopsis',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Text(
                     movie.synopsis,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.carbon,
-                      height: 1.45,
+                      color: AppColors.muted,
+                      height: 1.55,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  const Divider(),
-                  const SizedBox(height: 18),
-                  _InfoRow(
-                    icon: Icons.location_on_rounded,
-                    title: 'City',
-                    value: 'Bengaluru',
-                  ),
-                  const SizedBox(height: 16),
-                  _InfoRow(
-                    icon: Icons.local_activity_rounded,
-                    title: 'Format',
-                    value: '2D, mobile ticket accepted',
+                  const SizedBox(height: 26),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.line),
+                    ),
+                    child: const Column(
+                      children: [
+                        _InfoRow(
+                          icon: Icons.location_on_rounded,
+                          title: 'City',
+                          value: 'Bengaluru',
+                        ),
+                        SizedBox(height: 16),
+                        _InfoRow(
+                          icon: Icons.local_activity_rounded,
+                          title: 'Format',
+                          value: '2D, mobile ticket accepted',
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -174,33 +218,34 @@ class MovieDetailsScreen extends StatelessWidget {
 class _HeroPill extends StatelessWidget {
   final IconData icon;
   final String label;
-  final Color color;
+  final Color iconColor;
 
   const _HeroPill({
     required this.icon,
     required this.label,
-    required this.color,
+    this.iconColor = Colors.white,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+        color: const Color(0xB312151F),
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 16),
+          Icon(icon, color: iconColor, size: 16),
           const SizedBox(width: 6),
           Text(
             label,
             style: const TextStyle(
               color: Colors.white,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
             ),
           ),
         ],
@@ -228,10 +273,10 @@ class _InfoRow extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppColors.softRed,
-            borderRadius: BorderRadius.circular(8),
+            color: AppColors.crimson.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: AppColors.districtRed, size: 20),
+          child: Icon(icon, color: AppColors.crimson, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -250,8 +295,8 @@ class _InfoRow extends StatelessWidget {
               Text(
                 value,
                 style: const TextStyle(
-                  color: AppColors.ink,
-                  fontWeight: FontWeight.w800,
+                  color: AppColors.text,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
@@ -268,11 +313,11 @@ class _DetailsPosterFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ColoredBox(
-      color: AppColors.softRed,
+      color: AppColors.elevated,
       child: Center(
         child: Icon(
           Icons.local_movies_rounded,
-          color: AppColors.districtRed,
+          color: AppColors.muted,
           size: 64,
         ),
       ),

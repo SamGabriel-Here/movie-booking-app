@@ -8,7 +8,7 @@ void main() {
   testWidgets('Home screen shows movie list', (WidgetTester tester) async {
     await tester.pumpWidget(const MovieBookingApp());
 
-    expect(find.text('ShowRush'), findsOneWidget);
+    expect(find.text('ShowRush', findRichText: true), findsOneWidget);
     expect(find.byType(MovieCard), findsWidgets);
     expect(find.byType(TextField), findsOneWidget);
   });
