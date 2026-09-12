@@ -4,6 +4,10 @@ A movie ticket booking app built with Flutter. Browse movies currently showing i
 
 **Live demo:** https://samgabriel-here.github.io/movie-booking-app/
 
+![The ShowRush home screen, with a featured film and the now-showing grid filtered by genre](docs/screenshot-home.jpg)
+
+![Seat selection for a 13:30 show, with booked seats crossed out, one seat picked, and a running total](docs/screenshot-seats.png)
+
 ## Features
 
 - Browse movies now showing, with posters, ratings, and synopses
